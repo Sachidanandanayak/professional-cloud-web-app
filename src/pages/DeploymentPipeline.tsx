@@ -2,10 +2,10 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { 
   GitCommit, Github, TestTube, Box, Server, 
-  CheckCircle2, ArrowRight, Loader2, Play
+  CheckCircle2, Loader2, Play
 } from 'lucide-react';
 import DashboardLayout from '../layouts/DashboardLayout';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/Card';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { cn } from '../lib/utils';

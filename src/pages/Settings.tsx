@@ -1,5 +1,5 @@
 import React from 'react';
-import { User, Bell, Shield, Key, CreditCard, Monitor, AlertTriangle, Loader2, Check } from 'lucide-react';
+import { User, Bell, Shield, Key, CreditCard, AlertTriangle, Loader2, Check } from 'lucide-react';
 import DashboardLayout from '../layouts/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';

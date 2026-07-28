@@ -56,7 +56,7 @@ export default function Register() {
     setIsLoading(true);
     setRegisterError(null);
     try {
-      const response = await api.post('/auth/register', {
+      await api.post('/auth/register', {
         email: data.email,
         password: data.password,
         is_active: true,
@@ -210,7 +210,7 @@ export default function Register() {
               <CheckCircle2 className="w-12 h-12 text-success" />
             </div>
             <h2 className="text-3xl font-bold mb-4">Account Created!</h2>
-            <p className="text-muted text-lg mb-8">Redirecting you to your dashboard...</p>
+            <p className="text-muted text-lg mb-8">Redirecting you to the login page...</p>
             <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
           </motion.div>
         )}

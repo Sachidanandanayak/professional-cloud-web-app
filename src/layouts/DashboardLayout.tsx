@@ -1,9 +1,9 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Cloud, LayoutDashboard, Server, Database, 
-  Activity, Settings, Bell, Menu, X,
+  Cloud, LayoutDashboard,
+  Activity, Settings, Bell, Menu,
   Search, User, ChevronRight, LogOut,
   GitBranch, Box
 } from 'lucide-react';
@@ -14,6 +14,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [showNotifications, setShowNotifications] = React.useState(false);
   const [showProfileMenu, setShowProfileMenu] = React.useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('userFirstName');
+    localStorage.removeItem('userLastName');
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('userAvatar');
+    navigate('/', { replace: true });
+  };
 
   // Load profile data from localStorage
   const avatar = localStorage.getItem('userAvatar');
@@ -124,7 +134,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
 
         <div className="p-4 border-t border-border/50">
-          <Link to="/" className="flex items-center gap-3 px-3 py-2 rounded-lg text-muted hover:bg-white/5 hover:text-danger transition-colors group">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-muted hover:bg-white/5 hover:text-danger transition-colors group"
+          >
             <LogOut className="h-5 w-5 shrink-0" />
             <AnimatePresence>
               {sidebarOpen && (
@@ -138,7 +151,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 </motion.span>
               )}
             </AnimatePresence>
-          </Link>
+          </button>
         </div>
       </motion.aside>
 
@@ -244,13 +257,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                       </Link>
                     </div>
                     <div className="p-2 border-t border-border/50">
-                      <Link 
-                        to="/" 
-                        className="flex items-center gap-2 px-3 py-2 text-sm text-danger hover:bg-danger/10 hover:text-danger rounded-md transition-colors"
+                      <button
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-2 px-3 py-2 text-sm text-danger hover:bg-danger/10 hover:text-danger rounded-md transition-colors"
                       >
                         <LogOut className="w-4 h-4" />
                         Logout
-                      </Link>
+                      </button>
                     </div>
                   </motion.div>
                 )}

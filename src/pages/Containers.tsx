@@ -33,7 +33,6 @@ export default function Containers() {
   const [searchTerm, setSearchTerm] = useState('');
   const [containers, setContainers] = useState<any[]>([]);
   const [isDeploying, setIsDeploying] = useState(false);
-  const [loading, setLoading] = useState(true);
 
   const fetchContainers = async () => {
     try {
@@ -41,8 +40,6 @@ export default function Containers() {
       setContainers(response.data);
     } catch (error) {
       console.error("Failed to fetch containers", error);
-    } finally {
-      setLoading(false);
     }
   };
 

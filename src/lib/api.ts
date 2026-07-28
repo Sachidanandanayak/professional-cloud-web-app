@@ -1,4 +1,5 @@
-const API_BASE_URL = 'http://localhost:8000/api';
+// Use VITE_API_URL from environment variables — set this in .env for production
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
 export class ApiError extends Error {
   status: number;
@@ -33,7 +34,7 @@ async function fetchWithAuth(endpoint: string, options: RequestInit = {}) {
     let data;
     try {
       data = await response.json();
-    } catch (e) {
+    } catch {
       data = null;
     }
 

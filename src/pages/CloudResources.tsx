@@ -32,16 +32,12 @@ export default function CloudResources() {
   const [searchTerm, setSearchTerm] = useState('');
   const [resources, setResources] = useState<any[]>([]);
   const [isProvisioning, setIsProvisioning] = useState(false);
-  const [loading, setLoading] = useState(true);
-
   const fetchResources = async () => {
     try {
       const response = await api.get('/resources');
       setResources(response.data);
     } catch (error) {
       console.error("Failed to fetch resources", error);
-    } finally {
-      setLoading(false);
     }
   };
 

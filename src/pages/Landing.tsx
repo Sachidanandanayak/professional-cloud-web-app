@@ -1,16 +1,12 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { ArrowRight, Cloud, Server, Shield, Zap, CheckCircle2, Globe, Box, Cpu } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { ArrowRight, Server, Shield, Zap } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Card, CardContent } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import MainLayout from '../layouts/MainLayout';
 
 export default function Landing() {
-  const { scrollYProgress } = useScroll();
-  const y1 = useTransform(scrollYProgress, [0, 1], [0, 200]);
-  const y2 = useTransform(scrollYProgress, [0, 1], [0, -200]);
 
   const features = [
     {

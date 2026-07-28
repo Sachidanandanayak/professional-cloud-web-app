@@ -29,7 +29,7 @@ export default function ForgotPassword() {
     resolver: zodResolver(schema),
   });
 
-  const onSubmit = async (data: FormValues) => {
+  const onSubmit = async (_data: FormValues) => {
     setIsLoading(true);
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1500));

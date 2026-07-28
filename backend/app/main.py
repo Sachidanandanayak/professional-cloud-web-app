@@ -12,10 +12,10 @@ from app.core.exceptions import (
     sqlalchemy_exception_handler,
     general_exception_handler
 )
-from app.database import engine, Base, SessionLocal, get_db
-from app.models import domain
+from app.database import engine, Base
+from app.models import domain  # noqa: F401 — ensures models are registered
 
-# Create tables
+# Create tables on startup (use Alembic migrations in production)
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
@@ -46,14 +46,4 @@ app.include_router(api.api_router, prefix=settings.API_V1_STR)
 
 @app.get("/health", tags=["Health"])
 def health_check():
-    return {"success": True, "message": "API is healthy"}
-
-@app.get("/testdb", tags=["Health"])
-def testdb_endpoint(db: SessionLocal = Depends(get_db)):
-    try:
-        from app.repositories import user_repo
-        user = user_repo.get_by_email(db, "test@test.com")
-        return {"success": True, "user": str(user)}
-    except Exception as e:
-        import traceback
-        return {"success": False, "error": str(e), "traceback": traceback.format_exc()}
+    return {"success": True, "message": "API is healthy", "version": "1.0.0"}

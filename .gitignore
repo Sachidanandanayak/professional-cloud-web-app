@@ -10,9 +10,13 @@ backend/venv/
 __pycache__/
 *.pyc
 
-# Environment Variables
+# Environment Variables — never commit .env files (use .env.example as template)
 .env
 backend/.env
+
+# SQLite databases (auto-generated, do not commit)
+*.db
+backend/*.db
 
 # VS Code
 .vscode/

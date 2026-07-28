@@ -1,10 +1,10 @@
 import React from 'react';
 import { 
-  LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie,
+  AreaChart, Area, PieChart, Pie,
   XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Cell
 } from 'recharts';
 import { 
-  ArrowUpRight, ArrowDownRight, Users, Server, Database,
+  ArrowUpRight, ArrowDownRight, Server, Database,
   Activity, Cloud, Zap, Github, Cpu, HardDrive
 } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -179,7 +179,7 @@ export default function Dashboard() {
                       dataKey="value"
                       stroke="none"
                     >
-                      {costData.map((entry, index) => (
+                      {costData.map((_entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>

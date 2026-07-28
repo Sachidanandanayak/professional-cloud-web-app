@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -21,6 +21,9 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
+  // Redirect back to the page the user tried to visit before being redirected to login
+  const from = (location.state as any)?.from?.pathname || '/dashboard';
   const [isLoading, setIsLoading] = React.useState(false);
   const [loginError, setLoginError] = React.useState<string | null>(null);
 
@@ -44,8 +47,15 @@ export default function Login() {
       // Store token
       if (response.data?.access_token) {
         localStorage.setItem('accessToken', response.data.access_token);
-        // Optionally fetch profile and save userFirstName, userLastName
-        navigate('/dashboard');
+        // Store user profile for display in DashboardLayout
+        const user = response.data?.user;
+        if (user) {
+          const nameParts = (user.full_name || '').split(' ');
+          localStorage.setItem('userFirstName', nameParts[0] || '');
+          localStorage.setItem('userLastName', nameParts.slice(1).join(' ') || '');
+          localStorage.setItem('userEmail', user.email || '');
+        }
+        navigate(from, { replace: true });
       } else {
         setLoginError('Invalid response from server');
       }

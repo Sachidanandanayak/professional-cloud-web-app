@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { 
-  LineChart, Line, XAxis, YAxis, CartesianGrid, 
+  LineChart, Line, YAxis, CartesianGrid, 
   Tooltip, ResponsiveContainer, AreaChart, Area
 } from 'recharts';
 import { Activity, Cpu, Database, HardDrive, Wifi, AlertTriangle } from 'lucide-react';

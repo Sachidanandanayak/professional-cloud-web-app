@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Search, ChevronRight, BookOpen, Terminal, Shield, Zap, Code } from 'lucide-react';
+import { useState } from 'react';
+import { Search, BookOpen, Terminal, Shield, Zap, Code } from 'lucide-react';
 import MainLayout from '../layouts/MainLayout';
 import { Input } from '../components/ui/Input';
 
