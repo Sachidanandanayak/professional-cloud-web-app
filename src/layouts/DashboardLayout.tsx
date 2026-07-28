@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Cloud, LayoutDashboard,
-  Activity, Settings, Bell, Menu,
+  Activity, Settings, Bell, Menu, X,
   Search, User, ChevronRight, LogOut,
   GitBranch, Box
 } from 'lucide-react';
@@ -11,6 +11,7 @@ import { cn } from '../lib/utils';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = React.useState(true);
+  const [mobileOpen, setMobileOpen] = React.useState(false);
   const [showNotifications, setShowNotifications] = React.useState(false);
   const [showProfileMenu, setShowProfileMenu] = React.useState(false);
   const location = useLocation();
@@ -30,6 +31,34 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const firstName = localStorage.getItem('userFirstName') || 'John';
   const lastName = localStorage.getItem('userLastName') || 'Doe';
   const email = localStorage.getItem('userEmail') || 'john@example.com';
+
+  // Close mobile menu on route change
+  React.useEffect(() => {
+    setMobileOpen(false);
+  }, [location.pathname]);
+
+  // Handle key press (Escape closes mobile menu)
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setMobileOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Prevent background scrolling when mobile menu is open
+  React.useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileOpen]);
 
   // Close dropdowns when clicking outside
   React.useEffect(() => {
@@ -60,6 +89,108 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="flex h-screen bg-background text-text overflow-hidden">
+      {/* Mobile Sidebar & Backdrop */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={() => setMobileOpen(false)}
+              className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm md:hidden"
+            />
+
+            {/* Mobile Drawer */}
+            <motion.aside
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 250 }}
+              className="fixed inset-y-0 left-0 z-50 w-72 bg-black/95 backdrop-blur-2xl border-r border-border flex flex-col md:hidden shadow-2xl"
+            >
+              {/* Drawer Header */}
+              <div className="h-16 flex items-center justify-between px-4 border-b border-border/50">
+                <Link 
+                  to="/dashboard" 
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-2"
+                >
+                  <Cloud className="h-8 w-8 text-primary shrink-0" />
+                  <span className="text-lg font-bold text-gradient">NexusCloud</span>
+                </Link>
+                <button
+                  onClick={() => setMobileOpen(false)}
+                  className="p-2 text-muted hover:text-white rounded-lg hover:bg-white/5 transition-colors"
+                  aria-label="Close menu"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              {/* Profile Card in Drawer */}
+              <div className="p-4 border-b border-border/30 bg-white/[0.02] flex items-center gap-3">
+                <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-primary to-secondary p-[2px] shrink-0">
+                  <div className="h-full w-full rounded-full bg-background flex items-center justify-center overflow-hidden">
+                    {avatar ? (
+                      <img src={avatar} alt="User Avatar" className="h-full w-full object-cover" />
+                    ) : (
+                      <User className="h-5 w-5 text-muted" />
+                    )}
+                  </div>
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium text-sm text-white truncate">{firstName} {lastName}</p>
+                  <p className="text-xs text-muted truncate">{email}</p>
+                </div>
+              </div>
+
+              {/* Navigation Links */}
+              <div className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+                {navigation.map((item) => {
+                  const isActive = location.pathname === item.href;
+                  return (
+                    <Link
+                      key={item.name}
+                      to={item.href}
+                      onClick={() => setMobileOpen(false)}
+                      className={cn(
+                        "flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 group relative overflow-hidden",
+                        isActive
+                          ? "bg-gradient-to-r from-primary/20 to-primary/5 text-primary border border-primary/20 shadow-[0_0_15px_rgba(6,182,212,0.15)]"
+                          : "text-muted hover:bg-white/5 hover:text-white border border-transparent"
+                      )}
+                    >
+                      {isActive && (
+                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-r-full" />
+                      )}
+                      <item.icon className={cn("h-5 w-5 shrink-0 transition-colors", isActive ? "text-primary" : "text-muted group-hover:text-white")} />
+                      <span className="font-medium text-sm">{item.name}</span>
+                    </Link>
+                  );
+                })}
+              </div>
+
+              {/* Logout Button */}
+              <div className="p-4 border-t border-border/50">
+                <button
+                  onClick={() => {
+                    setMobileOpen(false);
+                    handleLogout();
+                  }}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-muted hover:bg-white/5 hover:text-danger transition-colors group"
+                >
+                  <LogOut className="h-5 w-5 shrink-0" />
+                  <span className="font-medium text-sm group-hover:text-danger">Logout</span>
+                </button>
+              </div>
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
+
       {/* Sidebar Desktop */}
       <motion.aside
         initial={{ width: 256 }}
@@ -163,8 +294,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* Top Header */}
         <header className="h-16 border-b border-border/50 bg-black/40 backdrop-blur-md flex items-center justify-between px-4 lg:px-8 z-10 sticky top-0">
           <div className="flex items-center gap-4 flex-1">
-            <button className="md:hidden text-muted hover:text-white">
-              <Menu className="h-6 w-6" />
+            <button 
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="md:hidden text-muted hover:text-white p-2 rounded-lg hover:bg-white/5 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50"
+              aria-label="Toggle navigation menu"
+            >
+              {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
             <div className="hidden sm:flex items-center max-w-md w-full relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted" />

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Cloud, Github } from 'lucide-react';
 import { cn } from '../lib/utils';
 
@@ -13,6 +13,22 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     { name: 'About', href: '/about' },
     { name: 'Documentation', href: '/documentation' },
   ];
+
+  // Close mobile menu on route change
+  React.useEffect(() => {
+    setIsOpen(false);
+  }, [location.pathname]);
+
+  // Handle Escape key to close mobile menu
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -51,38 +67,68 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
           </div>
 
           <button
-            className="md:hidden p-2 text-muted"
+            className="md:hidden p-2 text-muted hover:text-white rounded-lg transition-colors focus:outline-none"
             onClick={() => setIsOpen(!isOpen)}
+            aria-label="Toggle navigation menu"
           >
             {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
         </div>
       </header>
 
-      {/* Mobile Menu */}
-      {isOpen && (
-        <motion.div 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="md:hidden glass-panel border-b border-border absolute w-full z-40 top-16"
-        >
-          <div className="flex flex-col space-y-4 p-4">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                to={item.href}
-                onClick={() => setIsOpen(false)}
-                className="text-sm font-medium text-muted hover:text-primary"
-              >
-                {item.name}
-              </Link>
-            ))}
-            <hr className="border-border" />
-            <Link to="/login" className="text-sm font-medium text-muted">Sign In</Link>
-            <Link to="/register" className="text-sm font-medium text-primary">Get Started</Link>
-          </div>
-        </motion.div>
-      )}
+      {/* Mobile Menu & Backdrop */}
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={() => setIsOpen(false)}
+              className="fixed inset-0 top-16 z-30 bg-black/70 backdrop-blur-sm md:hidden"
+            />
+            
+            {/* Menu Dropdown */}
+            <motion.div 
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+              className="md:hidden glass-panel border-b border-border fixed w-full z-40 top-16 shadow-2xl"
+            >
+              <div className="flex flex-col space-y-4 p-4">
+                {navigation.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    onClick={() => setIsOpen(false)}
+                    className="text-sm font-medium text-muted hover:text-primary transition-colors py-1"
+                  >
+                    {item.name}
+                  </Link>
+                ))}
+                <hr className="border-border" />
+                <Link 
+                  to="/login" 
+                  onClick={() => setIsOpen(false)}
+                  className="text-sm font-medium text-muted hover:text-primary transition-colors py-1"
+                >
+                  Sign In
+                </Link>
+                <Link 
+                  to="/register" 
+                  onClick={() => setIsOpen(false)}
+                  className="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 text-center"
+                >
+                  Get Started
+                </Link>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       <main className="flex-1">
         {children}
